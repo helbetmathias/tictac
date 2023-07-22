@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: linear-gradient(45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  color: #fff;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+#title {
+  font-size: 2em;
+  position: fixed;
+  top: 10px;
+}
+
+#title:hover {
+  color: rgba(0, 255, 255, 1);
+  transform: scale(1.2);
+  text-shadow: 0 0 10px rgba(0, 255, 255, 1), 0 0 20px rgba(0, 255, 255, 1), 0 0 30px rgba(0, 255, 255, 1), 0 0 40px rgba(0, 255, 255, 1);
+}
+
+#tic-tac-toe-board {
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  gap: 15px;
+  width: 330px;
+  height: 330px;
+  margin-bottom: 20px;
+  animation: fallIn 0.5s ease-in-out;
+}
+
+@keyframes fallIn {
+  0% {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2em;
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 5px;
+  height: 100px;
+  width: 100px;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out, background 0.3s ease-in-out, color 0.3s ease-in-out;
+  transform-origin: center;
+}
+
+.cell:not(.filled) {
+  transition: transform 0.5s ease, box-shadow 0.5s ease, background-color 0.5s ease, color 0.5s ease;
+}
+
+.cell:not(.filled):hover {
+  transform: scale(1.05);
+  box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2);
+}
+
+.cell:not(.filled):active {
+  transform: scale(0.95);
+}
+
+.cell.filled {
+  cursor: default;
+  animation: pop 0.3s ease-in-out;
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.1);
+  }
+  80% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+#score-board {
+  display: flex;
+  justify-content: space-between;
+  width: 330px;
+  margin: 65px 0 10px;
+  transition: all 0.3s ease-in-out;
+}
+
+.score {
+  font-size: 1.2em;
+}
+
+#player-selection {
+  margin: 20px;
+  font-size: 1.2em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+  width: 330px;
+}
+
+#player-selection p {
+  margin-bottom: 10px;
+}
+
+#player-selection input {
+  padding: 10px;
+  width: 100%;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  outline: none;
+}
+
+#player-selection input:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+#player-selection input:focus {
+    border: 2px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.25);
+}
+
+#current-player {
+  margin: 20px;
+  font-size: 1.2em;
+}
+
+#start-button, #reset-button {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  font-size: 1em;
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  transform-origin: center;
+}
+
+#start-button:hover, #reset-button:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2);
+}
+
+#start-button:active, #reset-button:active {
+  transform: scale(0.95);
+}
+
+.popup-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 2;
+}
+
+.popup-content {
+  width: 300px;
+  height: 200px;
+  background: rgba(255, 255, 255, 0.15);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  text-align: center;
+  animation: zoom 0.5s ease-in-out;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes zoom {
+  0% {
+    transform: translate(-50%, -50%) scale(0.1);
+  }
+  85% {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.popup-content h1 {
+  margin-top: 0;
+  font-size: 1em;
+  word-wrap: break-word;
+}
+
+.popup-content button {
+  margin-top: 30px;
+  padding: 10px 20px;
+  font-size: 1em;
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  transform-origin: center;
+}
+
+.popup-content button:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0px 15px 20px rgba(0, 0, 0, 0.4);
+  transform: scale(1.05);
+}
+
+.popup-content button:active {
+  transform: scale(0.95);
+}
+</style>
+</head>
+<body>
+  <div id="title">Tic Tac Toe</div>
+  <div id="score-board">
+    <div class="score" id="score-x">Player 1: 0</div>
+    <div class="score" id="score-o">Player 2: 0</div>
+  </div>
+  <div id="player-selection">
+    <p>Enter player names:</p>
+    <input type="text" id="player1-name" placeholder="Player 1 name">
+    <input type="text" id="player2-name" placeholder="Player 2 name">
+  </div>
+  <div id="tic-tac-toe-board">
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+  </div>
+  <div id="current-player"></div>
+  <button id="start-button">Start</button>
+  <button id="reset-button">Reset</button>
+
+  <div id="popup" class="popup-overlay">
+    <div class="popup-content">
+      <h1 id="popup-message"></h1>
+      <button onclick="closePopup()">Close</button>
+    </div>
+  </div>
+
+  <audio id="click-sound" src="click.mp3"></audio> <!-- Add your own click.mp3 file -->
+  <audio id="win-sound" src="win.mp3"></audio> <!-- Add your own win.mp3 file -->
+
+  <script>
+      let board = Array(9).fill(null);
+  let currentPlayer = 'X'; // Default to 'X' initially
+  let gameOver = false;
+  let gameStarted = false;
+  let scoreX = 0;
+  let scoreO = 0;
+  let player1Name = '';
+  let player2Name = '';
+  const cells = document.querySelectorAll('.cell');
+  const currentPlayerDiv = document.getElementById('current-player');
+  const scoreXDiv = document.getElementById('score-x');
+  const scoreODiv = document.getElementById('score-o');
+  const startButton = document.getElementById('start-button');
+  const resetButton = document.getElementById('reset-button');
+  const popup = document.getElementById('popup');
+  const popupMessage = document.getElementById('popup-message');
+  const player1NameInput = document.getElementById('player1-name');
+  const player2NameInput = document.getElementById('player2-name');
+  const clickSound = document.getElementById('click-sound');
+  const winSound = document.getElementById('win-sound');
+
+  cells.forEach((cell, i) => {
+    cell.addEventListener('click', () => {
+      if (gameOver || board[i] !== null || !gameStarted) {
+        return;
+      }
+
+      board[i] = currentPlayer;
+      cell.textContent = currentPlayer;
+      cell.style.color = currentPlayer === 'X' ? 'red' : 'green';
+      cell.classList.add('filled');
+      cell.classList.add('animated'); // Add an animation
+      currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+      currentPlayerDiv.textContent = `${currentPlayer === 'X' ? player1Name : player2Name}'s turn`;
+      clickSound.play(); // Play the click sound
+
+      checkGameStatus();
+    });
+  });
+
+  startButton.addEventListener('click', () => {
+    if (player1NameInput.value === '' || player2NameInput.value === '') {
+      alert('Please enter player names.');
+      return;
+    }
+    gameStarted = true;
+    gameOver = false;
+    board = Array(9).fill(null);
+    cells.forEach(cell => {
+      cell.textContent = '';
+      cell.style.backgroundColor = 'rgba(255, 255, 255, 0.15)'; // reset the background color
+      cell.classList.remove('filled');
+      cell.classList.remove('animated'); // remove the animation
+    });
+    startButton.disabled = true;
+    player1Name = player1NameInput.value;
+    player2Name = player2NameInput.value;
+    scoreXDiv.textContent = `${player1Name}: ${scoreX}`;
+    scoreODiv.textContent = `${player2Name}: ${scoreO}`;
+    currentPlayer = 'X';  // Set the currentPlayer to 'X' when the game starts
+    currentPlayerDiv.textContent = `${player1Name}'s turn`;
+  });
+
+  resetButton.addEventListener('click', () => {
+    board = Array(9).fill(null);
+    gameOver = false;
+    gameStarted = false;
+    scoreX = 0;  // Reset the score for Player 1
+    scoreO = 0;  // Reset the score for Player 2
+    scoreXDiv.textContent = `${player1Name}: 0`;
+    scoreODiv.textContent = `${player2Name}: 0`;
+    cells.forEach(cell => {
+      cell.textContent = '';
+      cell.style.backgroundColor = 'rgba(255, 255, 255, 0.15)'; // reset the background color
+      cell.classList.remove('filled');
+      cell.classList.remove('animated'); // remove the animation
+    });
+    currentPlayerDiv.textContent = `Current Player: ${currentPlayer}`;
+    startButton.disabled = false;
+    player1NameInput.disabled = false;
+    player2NameInput.disabled = false;
+  });
+
+  function checkGameStatus() {
+    const winningCombinations = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6]
+    ];
+
+    winningCombinations.forEach(combination => {
+      if (board[combination[0]] !== null && board[combination[0]] === board[combination[1]] && board[combination[0]] === board[combination[2]]) {
+        gameOver = true;
+        const winner = board[combination[0]];
+        currentPlayerDiv.textContent = `${winner === 'X' ? player1Name : player2Name} wins!`;
+        if (winner === 'X') {
+          scoreX++;
+          scoreXDiv.textContent = `${player1Name}: ${scoreX}`;
+        } else {
+          scoreO++;
+          scoreODiv.textContent = `${player2Name}: ${scoreO}`;
+        }
+        combination.forEach(index => {
+          cells[index].style.backgroundColor = 'lightgreen';
+        });
+        showPopup(`Game Over! ${winner === 'X' ? player1Name : player2Name} wins! Click Start to play again!`);
+        gameStarted = false;
+        startButton.disabled = false;
+      }
+    });
+
+    if (!gameOver && board.every(cell => cell !== null)) {
+      gameOver = true;
+      currentPlayerDiv.textContent = 'It\'s a tie!';
+      showPopup('Game Over! It\'s a tie! Click Start to play again!');
+      gameStarted = false;
+      startButton.disabled = false;
+    }
+  }
+
+  function showPopup(message) {
+    popup.style.display = 'block';
+    popupMessage.textContent = message;
+    winSound.play(); // Play the win sound
+  }
+
+  function closePopup() {
+    popup.style.display = 'none';
+  }
+  </script>
+</body>
+</html>
